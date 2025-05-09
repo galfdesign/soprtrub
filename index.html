@@ -31,7 +31,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 10px;
         }
 
         .calculator-container {
@@ -46,41 +46,43 @@
         .calculator-header {
             background: var(--primary-color);
             color: white;
-            padding: 20px;
+            padding: 15px;
             text-align: center;
         }
 
         .design-credit {
             display: block;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: rgba(255, 255, 255, 0.8);
             margin-top: 5px;
         }
 
         .calculator-header h1 {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 600;
             margin: 0;
         }
 
         .calculator-body {
-            padding: 25px;
+            padding: 15px;
         }
 
         .tabs {
             display: flex;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             border-bottom: 1px solid #ddd;
+            overflow-x: auto;
+            white-space: nowrap;
         }
 
         .tab {
-            padding: 12px 24px;
+            padding: 10px 15px;
             cursor: pointer;
             font-weight: 500;
             color: var(--dark-color);
             border-bottom: 3px solid transparent;
             transition: all 0.3s ease;
-            font-size: 1.05rem;
+            font-size: 0.95rem;
         }
 
         .tab.active {
@@ -97,20 +99,27 @@
         }
 
         .input-group {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .input-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-weight: 500;
             color: var(--dark-color);
-            font-size: 1.05rem;
+            font-size: 0.95rem;
         }
 
         .input-row {
             display: flex;
-            gap: 15px;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        @media (min-width: 480px) {
+            .input-row {
+                flex-direction: row;
+            }
         }
 
         .input-col {
@@ -123,20 +132,20 @@
             border: 1px solid #ddd;
             border-radius: var(--border-radius);
             overflow: hidden;
-            height: 50px;
-            margin-bottom: 15px;
+            height: 45px;
+            margin-bottom: 10px;
         }
 
         .input-field-large {
-            height: 55px;
+            height: 50px;
         }
 
         .input-field input, .input-field select {
             flex: 1;
-            padding: 12px 15px;
+            padding: 10px 12px;
             border: none;
             outline: none;
-            font-size: 1.1rem;
+            font-size: 1rem;
             height: 100%;
         }
 
@@ -144,21 +153,21 @@
             border-left: 1px solid #ddd;
             background: var(--light-color);
             cursor: pointer;
-            min-width: 120px;
+            min-width: 100px;
         }
 
         .number-controls {
             display: flex;
             align-items: center;
-            margin-left: 10px;
+            margin-left: 5px;
         }
 
         .number-btn {
-            width: 40px;
-            height: 40px;
+            width: 35px;
+            height: 35px;
             background: var(--light-color);
             border: none;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -172,16 +181,16 @@
 
         .calculate-btn {
             width: 100%;
-            padding: 16px;
+            padding: 14px;
             background: var(--primary-color);
             color: white;
             border: none;
             border-radius: var(--border-radius);
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-top: 10px;
+            margin-top: 5px;
         }
 
         .calculate-btn:hover {
@@ -190,8 +199,8 @@
         }
 
         .result-container {
-            margin-top: 25px;
-            padding: 20px;
+            margin-top: 20px;
+            padding: 15px;
             background: rgba(67, 97, 238, 0.1);
             border-radius: var(--border-radius);
             display: none;
@@ -200,34 +209,34 @@
 
         .result-title {
             color: var(--primary-color);
-            margin-bottom: 10px;
-            font-size: 1.3rem;
+            margin-bottom: 8px;
+            font-size: 1.2rem;
         }
 
         .result-value {
-            font-size: 1.6rem;
+            font-size: 1.4rem;
             font-weight: 700;
             color: var(--secondary-color);
         }
 
         .unit {
-            font-size: 1.1rem;
+            font-size: 1rem;
             color: var(--dark-color);
         }
 
         .flow-units {
             margin-top: 5px;
-            font-size: 1rem;
+            font-size: 0.9rem;
             color: var(--dark-color);
         }
 
         .pump-options {
-            margin-top: 20px;
+            margin-top: 15px;
         }
 
         .pump-option {
-            padding: 18px;
-            margin-bottom: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
             border: 1px solid #ddd;
             border-radius: var(--border-radius);
             transition: all 0.3s ease;
@@ -254,21 +263,21 @@
 
         .pump-option h4 {
             color: var(--primary-color);
-            margin-bottom: 8px;
-            font-size: 1.2rem;
+            margin-bottom: 6px;
+            font-size: 1.1rem;
         }
 
         .pump-option p {
-            margin-bottom: 5px;
-            font-size: 1rem;
+            margin-bottom: 4px;
+            font-size: 0.9rem;
         }
 
         .formula {
-            margin-top: 20px;
-            padding: 15px;
+            margin-top: 15px;
+            padding: 12px;
             background: var(--light-color);
             border-radius: var(--border-radius);
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             color: var(--dark-color);
         }
 
@@ -278,24 +287,24 @@
         }
 
         .additional-info {
-            margin-top: 10px;
-            font-size: 1rem;
+            margin-top: 8px;
+            font-size: 0.9rem;
         }
 
         .pump-point {
-            margin-top: 10px;
-            padding: 10px;
+            margin-top: 8px;
+            padding: 8px;
             background: rgba(72, 149, 239, 0.1);
             border-radius: 4px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .pump-calculated {
-            margin-top: 8px;
-            padding: 8px;
+            margin-top: 6px;
+            padding: 6px;
             background: rgba(76, 201, 240, 0.1);
             border-radius: 4px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         @keyframes fadeIn {
@@ -305,12 +314,12 @@
 
         .warning {
             color: var(--warning-color);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             margin-top: 5px;
         }
 
         .pipe-type-info {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #6c757d;
             margin-top: 3px;
         }
@@ -408,7 +417,7 @@
                                     <option value="ss">Нержавеющая сталь</option>
                                 </select>
                             </div>
-                            <div class="pipe-type-info" id="pipeTypeInfo">Шероховатость: 0.007 мм</div>
+                            <div class="pipe-type-info" id="pipeTypeInfo"></div>
                         </div>
                     </div>
                 </div>
@@ -512,11 +521,11 @@
         
         // Описание материалов труб
         const pipeTypeDescriptions = {
-            'ppr': 'Шероховатость: 0.007 мм (гладкие стенки)',
-            'pex': 'Шероховатость: 0.007 мм (гладкие стенки)',
-            'mp': 'Шероховатость: 0.005 мм (очень гладкие стенки)',
-            'cu': 'Шероховатость: 0.0015 мм (идеально гладкие стенки)',
-            'ss': 'Шероховатость: 0.015 мм (шероховатые стенки)'
+            'ppr': 'Полипропилен (PPR)',
+            'pex': 'Сшитый полиэтилен (PEX)',
+            'mp': 'Металлопластик',
+            'cu': 'Медь',
+            'ss': 'Нержавеющая сталь'
         };
         
         // Характеристики насосов (м³/ч при разных напорах)
