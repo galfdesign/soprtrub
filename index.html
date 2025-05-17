@@ -6,687 +6,497 @@
     <title>Расчет системы отопления</title>
     <style>
         :root {
-            --primary-color: #4361ee;
-            --secondary-color: #3f37c9;
-            --accent-color: #4895ef;
-            --light-color: #f8f9fa;
-            --dark-color: #212529;
-            --success-color: #4cc9f0;
-            --warning-color: #f8961e;
-            --danger-color: #f94144;
-            --border-radius: 10px;
-            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --main-color: #2c7be5;
+            --border-color: #e3ebf6;
+            --text-color: #12263f;
+            --bg-color: #f9fbfd;
+            --input-bg: #ffffff;
         }
-
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
         body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 10px;
-        }
-
-        .calculator-container {
-            width: 100%;
-            max-width: 700px;
-            background: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            overflow: hidden;
-        }
-
-        .calculator-header {
-            background: var(--primary-color);
-            color: white;
-            padding: 15px;
-            text-align: center;
-        }
-
-        .calculator-header h1 {
-            font-size: 1.5rem;
-            font-weight: 600;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 0;
             margin: 0;
         }
-
-        .calculator-body {
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
             padding: 15px;
         }
-
+        .calculator {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .calculator-header {
+            background-color: var(--main-color);
+            color: white;
+            padding: 15px 20px;
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+        }
+        .calculator-body {
+            padding: 20px;
+        }
         .tabs {
             display: flex;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
             overflow-x: auto;
             white-space: nowrap;
         }
-
         .tab {
             padding: 10px 15px;
             cursor: pointer;
             font-weight: 500;
-            color: var(--dark-color);
+            color: var(--text-color);
             border-bottom: 3px solid transparent;
             transition: all 0.3s ease;
             font-size: 0.95rem;
+            background: none;
         }
-
         .tab.active {
-            color: var(--primary-color);
-            border-bottom: 3px solid var(--primary-color);
+            color: var(--main-color);
+            border-bottom: 3px solid var(--main-color);
         }
-
         .tab-content {
             display: none;
         }
-
         .tab-content.active {
             display: block;
         }
-
         .input-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
-
         .input-group label {
             display: block;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
+            font-size: 14px;
             font-weight: 500;
-            color: var(--dark-color);
-            font-size: 0.95rem;
+            color: var(--text-color);
         }
-
-        .input-row {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 15px;
+            background-color: var(--input-bg);
+            transition: border-color 0.2s;
         }
-
-        @media (min-width: 480px) {
-            .input-row {
-                flex-direction: row;
-            }
-        }
-
-        .input-col {
-            flex: 1;
-        }
-
-        .input-field {
-            display: flex;
-            align-items: center;
-            border: 1px solid #ddd;
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            height: 45px;
-            margin-bottom: 10px;
-        }
-
-        .input-field-large {
-            height: 50px;
-        }
-
-        .input-field input, .input-field select {
-            flex: 1;
-            padding: 10px 12px;
-            border: none;
+        .input-group input:focus,
+        .input-group select:focus {
             outline: none;
-            font-size: 1rem;
-            height: 100%;
+            border-color: var(--main-color);
+            box-shadow: 0 0 0 3px rgba(44, 123, 229, 0.1);
         }
-
-        .input-field select {
-            border-left: 1px solid #ddd;
-            background: var(--light-color);
-            cursor: pointer;
-            min-width: 100px;
-        }
-
         .number-controls {
             display: flex;
-            align-items: center;
-            margin-left: 5px;
+            gap: 4px;
+            margin-top: 8px;
         }
-
         .number-btn {
-            width: 35px;
-            height: 35px;
-            background: var(--light-color);
+            width: 36px;
+            height: 36px;
             border: none;
-            font-size: 1.1rem;
+            background: var(--bg-color);
+            color: var(--main-color);
+            font-size: 20px;
+            border-radius: 6px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--dark-color);
+            transition: background 0.15s;
         }
-
         .number-btn:hover {
-            background: #e9ecef;
+            background: var(--border-color);
         }
-
-        .result-container {
-            margin-top: 20px;
+        .results, .result-container {
+            background-color: var(--bg-color);
+            border-radius: 8px;
             padding: 15px;
-            background: rgba(67, 97, 238, 0.1);
-            border-radius: var(--border-radius);
-            display: none;
-            animation: fadeIn 0.5s ease;
+            margin-top: 10px;
         }
-
-        .result-title {
-            color: var(--primary-color);
-            margin-bottom: 8px;
-            font-size: 1.2rem;
+        .result-item, .flow-units {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
         }
-
+        .result-item:last-child, .flow-units:last-child {
+            border-bottom: none;
+        }
+        .result-label {
+            font-size: 14px;
+            color: #6e84a3;
+        }
         .result-value {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--secondary-color);
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--main-color);
         }
-
         .unit {
-            font-size: 1rem;
-            color: var(--dark-color);
+            font-size: 14px;
+            color: #6e84a3;
         }
-
-        .flow-units {
-            margin-top: 5px;
+        .formula {
+            background: #f1f5fa;
+            border-radius: 6px;
+            padding: 10px 12px;
+            font-size: 0.92rem;
+            margin-top: 12px;
+            color: #496284;
+        }
+        .formula-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .additional-info {
+            margin-top: 6px;
             font-size: 0.9rem;
-            color: var(--dark-color);
         }
-
         .pump-options {
             margin-top: 15px;
         }
-
         .pump-option {
             padding: 15px;
             margin-bottom: 10px;
-            border: 1px solid #ddd;
-            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
             transition: all 0.3s ease;
+            background: #fff;
         }
-
-        .pump-option:hover {
-            border-color: var(--accent-color);
-        }
-
-        .pump-option.selected {
-            border-color: var(--primary-color);
-            background-color: rgba(67, 97, 238, 0.05);
-        }
-
         .pump-option.unavailable {
-            opacity: 0.7;
+            opacity: 0.65;
         }
-
-        .pump-option.unavailable h4,
-        .pump-option.unavailable p {
+        .pump-option.unavailable h4, .pump-option.unavailable p {
             text-decoration: line-through;
-            color: #6c757d;
+            color: #adb5bd;
         }
-
         .pump-option h4 {
-            color: var(--primary-color);
+            color: var(--main-color);
             margin-bottom: 6px;
             font-size: 1.1rem;
         }
-
-        .pump-option p {
-            margin-bottom: 4px;
-            font-size: 0.9rem;
-        }
-
-        .formula {
-            margin-top: 15px;
-            padding: 12px;
-            background: var(--light-color);
-            border-radius: var(--border-radius);
-            font-size: 0.85rem;
-            color: var(--dark-color);
-        }
-
-        .formula-title {
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .additional-info {
+        .pump-point, .pump-calculated {
             margin-top: 8px;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
         }
-
-        .pump-point {
-            margin-top: 8px;
-            padding: 8px;
-            background: rgba(72, 149, 239, 0.1);
-            border-radius: 4px;
-            font-size: 0.85rem;
-        }
-
-        .pump-calculated {
-            margin-top: 6px;
-            padding: 6px;
-            background: rgba(76, 201, 240, 0.1);
-            border-radius: 4px;
-            font-size: 0.85rem;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .warning {
-            color: var(--warning-color);
-            font-size: 0.9rem;
-            margin-top: 5px;
-        }
-
-        .pipe-type-info {
-            font-size: 0.8rem;
-            color: #6c757d;
-            margin-top: 3px;
+        @media (max-width: 480px) {
+            .container { padding: 10px; }
+            .calculator-header { padding: 12px 10px; font-size: 16px; }
+            .calculator-body { padding: 10px; }
+            .input-group input, .input-group select { padding: 10px 8px; font-size: 14px; }
+            .pump-option { padding: 10px; }
         }
     </style>
 </head>
 <body>
-    <div class="calculator-container">
-        <div class="calculator-header">
-            <h1>Расчет системы отопления</h1>
-        </div>
-        
-        <div class="calculator-body">
-            <div class="tabs">
-                <div class="tab active" data-tab="flow">Расход теплоносителя</div>
-                <div class="tab" data-tab="pump">Подбор насоса</div>
+    <div class="container">
+        <div class="calculator">
+            <div class="calculator-header">
+                Расчет системы отопления
             </div>
-            
-            <div class="tab-content active" id="flow-tab">
-                <div class="input-group">
-                    <label for="fluidType">Тип жидкости</label>
-                    <div class="input-field">
-                        <select id="fluidType">
-                            <option value="water">Вода</option>
-                            <option value="glycol">Гликоль (30%)</option>
+            <div class="calculator-body">
+                <div class="tabs">
+                    <div class="tab active" data-tab="flow">Расход теплоносителя</div>
+                    <div class="tab" data-tab="pump">Подбор насоса</div>
+                </div>
+                <div class="tab-content active" id="flow-tab">
+                    <div class="input-group">
+                        <label for="heatLoad">Тепловая нагрузка (кВт)</label>
+                        <input type="number" id="heatLoad" value="12" step="1" placeholder="Введите значение">
+                        <select id="heatUnit" style="margin-top:8px">
+                            <option value="kW">кВт/час</option>
+                            <option value="kcal">ккал/час</option>
                         </select>
-                    </div>
-                </div>
-                
-                <div class="input-group">
-                    <label for="power">Тепловая мощность Q, кВт</label>
-                    <div class="input-field">
-                        <input type="number" id="power" placeholder="Введите значение">
-                    </div>
-                </div>
-                
-                <div class="input-group">
-                    <label for="deltaTemp">Температурный перепад ∆t, °C</label>
-                    <div class="input-field">
-                        <input type="number" id="deltaTemp" placeholder="Введите значение">
-                    </div>
-                </div>
-                
-                <div class="result-container" id="flow-result">
-                    <div class="result-title">Результаты:</div>
-                    <div>
-                        <span>Расход теплоносителя: </span>
-                        <span class="result-value" id="flowRate">0</span>
-                        <span class="unit">л/час</span>
-                    </div>
-                    <div class="flow-units">
-                        (<span id="flowM3H">0</span> м³/ч, <span id="flowLMin">0</span> л/мин)
-                    </div>
-                    <div class="additional-info">
-                        <div>Скорость потока: <span id="flowVelocity">0</span> м/с</div>
-                    </div>
-                    <div class="formula">
-                        <div class="formula-title">Формула расчета:</div>
-                        <div>G = Q / (c × ΔT)</div>
-                        <div>Где: Q - тепловая нагрузка (кДж/час), c = 4.187 кДж/(кг·°C), ΔT - разница температур (°C)</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="tab-content" id="pump-tab">
-                <div class="input-row">
-                    <div class="input-col">
-                        <div class="input-group">
-                            <label for="pipeDiameter">Внутренний диаметр трубы (мм)</label>
-                            <div class="input-field input-field-large">
-                                <input type="number" id="pipeDiameter" value="25" step="1" min="10" max="100" placeholder="Введите диаметр">
-                                <div class="number-controls">
-                                    <button class="number-btn" onclick="changeValue('pipeDiameter', 1)">+</button>
-                                    <button class="number-btn" onclick="changeValue('pipeDiameter', -1)">-</button>
-                                </div>
-                            </div>
+                        <div class="number-controls">
+                            <button class="number-btn" onclick="changeValue('heatLoad', 1)">+</button>
+                            <button class="number-btn" onclick="changeValue('heatLoad', -1)">-</button>
                         </div>
                     </div>
-                    <div class="input-col">
-                        <div class="input-group">
-                            <label for="pipeType">Материал трубы</label>
-                            <div class="input-field input-field-large">
-                                <select id="pipeType">
-                                    <option value="ppr">Полипропилен (PPR)</option>
-                                    <option value="pex">Сшитый полиэтилен (PEX)</option>
-                                    <option value="mp">Металлопластик</option>
-                                    <option value="cu">Медь</option>
-                                    <option value="ss">Нержавеющая сталь</option>
-                                </select>
-                            </div>
-                            <div class="pipe-type-info" id="pipeTypeInfo"></div>
+                    <div class="input-group">
+                        <label for="supplyTemp">Температура на подаче (°C)</label>
+                        <input type="number" id="supplyTemp" value="70" placeholder="Введите температуру">
+                    </div>
+                    <div class="input-group">
+                        <label for="returnTemp">Температура на обратке (°C)</label>
+                        <input type="number" id="returnTemp" value="60" placeholder="Введите температуру">
+                    </div>
+                    <div class="result-container" id="flow-result">
+                        <div class="result-item">
+                            <span class="result-label">Расход теплоносителя:</span>
+                            <span class="result-value"><span id="flowRate">0</span> <span class="unit">л/час</span></span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">м³/ч</span>
+                            <span class="result-value" id="flowM3H">0</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">л/мин</span>
+                            <span class="result-value" id="flowLMin">0</span>
+                        </div>
+                        <div class="formula">
+                            <div class="formula-title">Формула расчета:</div>
+                            <div>G = Q / (c × ΔT)</div>
+                            <div>Где: Q - тепловая нагрузка (кДж/час), c = 4.187 кДж/(кг·°C), ΔT - разница температур (°C)</div>
                         </div>
                     </div>
                 </div>
-                
-                <div class="input-group">
-                    <label for="pipeLength">Длина трубопровода (м)</label>
-                    <div class="input-field">
+                <div class="tab-content" id="pump-tab">
+                    <div class="input-group">
+                        <label for="pipeDiameter">Внутренний диаметр трубы (мм)</label>
+                        <input type="number" id="pipeDiameter" value="25" step="1" min="10" max="100" placeholder="Введите диаметр">
+                        <div class="number-controls">
+                            <button class="number-btn" onclick="changeValue('pipeDiameter', 1)">+</button>
+                            <button class="number-btn" onclick="changeValue('pipeDiameter', -1)">-</button>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="pipeType">Материал трубы</label>
+                        <select id="pipeType">
+                            <option value="ppr">Полипропилен (PPR)</option>
+                            <option value="pex">Сшитый полиэтилен (PEX)</option>
+                            <option value="mp">Металлопластик</option>
+                            <option value="cu">Медь</option>
+                            <option value="ss">Нержавеющая сталь</option>
+                        </select>
+                        <div class="pipe-type-info" id="pipeTypeInfo"></div>
+                    </div>
+                    <div class="input-group">
+                        <label for="pipeLength">Длина трубопровода (м)</label>
                         <input type="number" id="pipeLength" value="50" step="10" placeholder="Введите длину">
                         <div class="number-controls">
                             <button class="number-btn" onclick="changeValue('pipeLength', 10)">+</button>
                             <button class="number-btn" onclick="changeValue('pipeLength', -10)">-</button>
                         </div>
                     </div>
-                </div>
-                
-                <div class="input-group">
-                    <label>Рассчитанный расход: <span id="displayFlowRate">0</span> л/час (<span id="displayFlowM3H">0</span> м³/ч, <span id="displayFlowLMin">0</span> л/мин)</label>
-                </div>
-                
-                <div class="result-container" id="pump-result">
-                    <div class="result-title">Гидравлическое сопротивление:</div>
-                    <div>
-                        <span class="result-value" id="resistance">0</span>
-                        <span class="unit">м вод. ст.</span>
+                    <div class="input-group">
+                        <label>Рассчитанный расход: <span id="displayFlowRate">0</span> л/час (<span id="displayFlowM3H">0</span> м³/ч, <span id="displayFlowLMin">0</span> л/мин)</label>
                     </div>
-                    <div class="additional-info">
-                        <div>Скорость потока: <span id="pumpVelocity">0</span> м/с</div>
-                        <div>Потери давления: <span id="pressureDrop">0</span> Па</div>
-                    </div>
-                    
-                    <div class="pump-options" id="pumpOptions">
-                        <h3>Рекомендуемые насосы:</h3>
-                        
-                        <div class="pump-option" data-pump="25-40">
-                            <h4>Насос Grundfos UPS 25-40</h4>
-                            <p>Макс. напор: 4.0 м</p>
-                            <p>Макс. производительность: 2.5 м³/ч</p>
-                            <div class="pump-point">
-                                <div>Рабочая точка: 2.0 м³/ч при 3.5 м</div>
+                    <div class="result-container" id="pump-result" style="display:none">
+                        <div class="result-item">
+                            <span class="result-label">Гидравлическое сопротивление:</span>
+                            <span class="result-value"><span id="resistance">0</span> <span class="unit">м вод. ст.</span></span>
+                        </div>
+                        <div class="additional-info">
+                            <div>Скорость потока: <span id="pumpVelocity">0</span> м/с</div>
+                            <div>Потери давления: <span id="pressureDrop">0</span> Па</div>
+                        </div>
+                        <div class="pump-options" id="pumpOptions">
+                            <h3 style="margin-top:10px;margin-bottom:8px;color:var(--main-color);font-size:15px;">Рекомендуемые насосы:</h3>
+                            <div class="pump-option" data-pump="25-40">
+                                <h4>Насос Grundfos UPS 25-40</h4>
+                                <p>Макс. напор: 4.0 м</p>
+                                <p>Макс. производительность: 2.5 м³/ч</p>
+                                <div class="pump-point"><div>Рабочая точка: 2.0 м³/ч при 3.5 м</div></div>
+                                <div class="pump-calculated">
+                                    <div>Расчетный расход: <span class="pump-flow">0</span> м³/ч</div>
+                                    <div>Необходимый напор: <span class="pump-head">0</span> м</div>
+                                </div>
                             </div>
-                            <div class="pump-calculated">
-                                <div>Расчетный расход: <span class="pump-flow">0</span> м³/ч</div>
-                                <div>Необходимый напор: <span class="pump-head">0</span> м</div>
+                            <div class="pump-option" data-pump="25-60">
+                                <h4>Насос Grundfos UPS 25-60</h4>
+                                <p>Макс. напор: 6.0 м</p>
+                                <p>Макс. производительность: 3.5 м³/ч</p>
+                                <div class="pump-point"><div>Рабочая точка: 3.0 м³/ч при 5.0 м</div></div>
+                                <div class="pump-calculated">
+                                    <div>Расчетный расход: <span class="pump-flow">0</span> м³/ч</div>
+                                    <div>Необходимый напор: <span class="pump-head">0</span> м</div>
+                                </div>
+                            </div>
+                            <div class="pump-option" data-pump="25-80">
+                                <h4>Насос Grundfos UPS 25-80</h4>
+                                <p>Макс. напор: 8.0 м</p>
+                                <p>Макс. производительность: 4.5 м³/ч</p>
+                                <div class="pump-point"><div>Рабочая точка: 4.0 м³/ч при 6.5 м</div></div>
+                                <div class="pump-calculated">
+                                    <div>Расчетный расход: <span class="pump-flow">0</span> м³/ч</div>
+                                    <div>Необходимый напор: <span class="pump-head">0</span> м</div>
+                                </div>
                             </div>
                         </div>
-                        
-                        <div class="pump-option" data-pump="25-60">
-                            <h4>Насос Grundfos UPS 25-60</h4>
-                            <p>Макс. напор: 6.0 м</p>
-                            <p>Макс. производительность: 3.5 м³/ч</p>
-                            <div class="pump-point">
-                                <div>Рабочая точка: 3.0 м³/ч при 5.0 м</div>
-                            </div>
-                            <div class="pump-calculated">
-                                <div>Расчетный расход: <span class="pump-flow">0</span> м³/ч</div>
-                                <div>Необходимый напор: <span class="pump-head">0</span> м</div>
-                            </div>
+                        <div class="formula" style="margin-top:12px;">
+                            <div class="formula-title">Формула расчета сопротивления:</div>
+                            <div>ΔP = λ × (L/D) × (ρ×v²)/2</div>
+                            <div>Где: λ - коэффициент трения, L - длина трубы, D - диаметр, ρ - плотность, v - скорость</div>
+                            <div>1 м вод. ст. = 9806.65 Па</div>
                         </div>
-                        
-                        <div class="pump-option" data-pump="25-80">
-                            <h4>Насос Grundfos UPS 25-80</h4>
-                            <p>Макс. напор: 8.0 м</p>
-                            <p>Макс. производительность: 4.5 м³/ч</p>
-                            <div class="pump-point">
-                                <div>Рабочая точка: 4.0 м³/ч при 6.5 м</div>
-                            </div>
-                            <div class="pump-calculated">
-                                <div>Расчетный расход: <span class="pump-flow">0</span> м³/ч</div>
-                                <div>Необходимый напор: <span class="pump-head">0</span> м</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="formula">
-                        <div class="formula-title">Формула расчета сопротивления:</div>
-                        <div>ΔP = λ × (L/D) × (ρ×v²)/2</div>
-                        <div>Где: λ - коэффициент трения, L - длина трубы, D - диаметр, ρ - плотность, v - скорость</div>
-                        <div>1 м вод. ст. = 9806.65 Па</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
     <script>
-        // Глобальные переменные для хранения результатов
-        let calculatedFlowRate = 0;
-        let flowVelocity = 0;
-        let pressureDrop = 0;
-        
-        // Коэффициенты шероховатости для разных материалов труб (мм)
-        const pipeRoughness = {
-            'ppr': 0.007,    // Полипропилен
-            'pex': 0.007,     // Сшитый полиэтилен
-            'mp': 0.005,      // Металлопластик
-            'cu': 0.0015,     // Медь
-            'ss': 0.015       // Нержавеющая сталь
-        };
-        
-        // Описание материалов труб
-        const pipeTypeDescriptions = {
-            'ppr': 'Полипропилен (PPR)',
-            'pex': 'Сшитый полиэтилен (PEX)',
-            'mp': 'Металлопластик',
-            'cu': 'Медь',
-            'ss': 'Нержавеющая сталь'
-        };
-        
-        // Характеристики насосов (м³/ч при разных напорах)
-        const pumpCharacteristics = {
-            '25-40': {
-                flow: 2.0,
-                head: 3.5,
-                maxFlow: 2.5,
-                maxHead: 4.0
-            },
-            '25-60': {
-                flow: 3.0,
-                head: 5.0,
-                maxFlow: 3.5,
-                maxHead: 6.0
-            },
-            '25-80': {
-                flow: 4.0,
-                head: 6.5,
-                maxFlow: 4.5,
-                maxHead: 8.0
-            }
-        };
-        
-        // Функция для изменения значений с кнопок
         function changeValue(id, increment) {
             const input = document.getElementById(id);
             let value = parseFloat(input.value) || 0;
             const step = parseFloat(input.step) || 1;
             value += increment * step;
-            
-            // Проверка минимального и максимального значений для диаметра трубы
             if (id === 'pipeDiameter') {
                 if (value < 10) value = 10;
                 if (value > 100) value = 100;
             }
-            
             input.value = value;
-            // Вызываем расчет при изменении значения
-            if (document.querySelector('.tab.active').dataset.tab === 'flow') {
+            const activeTab = document.querySelector('.tab.active').dataset.tab;
+            if (activeTab === 'flow') {
                 calculateFlow();
-            } else {
+            } else if (activeTab === 'pump') {
                 calculatePump();
             }
         }
-        
-        // Обновление информации о материале трубы
+
+        let calculatedFlowRate = 0;
+        let flowVelocity = 0;
+        let pressureDrop = 0;
+
+        const pipeRoughness = { 'ppr': 0.007, 'pex': 0.007, 'mp': 0.005, 'cu': 0.0015, 'ss': 0.015 };
+        const pipeTypeDescriptions = {
+            'ppr': 'Полипропилен (PPR)', 'pex': 'Сшитый полиэтилен (PEX)', 'mp': 'Металлопластик', 'cu': 'Медь', 'ss': 'Нержавеющая сталь'
+        };
+        const pumpCharacteristics = {
+            '25-40': { flow: 2.0, head: 3.5, maxFlow: 2.5, maxHead: 4.0 },
+            '25-60': { flow: 3.0, head: 5.0, maxFlow: 3.5, maxHead: 6.0 },
+            '25-80': { flow: 4.0, head: 6.5, maxFlow: 4.5, maxHead: 8.0 }
+        };
+
         document.getElementById('pipeType').addEventListener('change', function() {
             const type = this.value;
             document.getElementById('pipeTypeInfo').textContent = pipeTypeDescriptions[type];
             calculatePump();
         });
-        
-        // Инициализация табов
+
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', function() {
                 document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                 document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                
                 this.classList.add('active');
                 document.getElementById(`${this.dataset.tab}-tab`).classList.add('active');
-                
-                // Пересчитываем при переключении вкладок
-                if (this.dataset.tab === 'flow') {
-                    calculateFlow();
-                } else {
-                    calculatePump();
-                }
+                if (this.dataset.tab === 'flow') calculateFlow();
+                if (this.dataset.tab === 'pump') calculatePump();
             });
         });
-        
-        // Расчет расхода теплоносителя
+
+        [
+            'heatLoad', 'heatUnit', 'supplyTemp', 'returnTemp'
+        ].forEach(id => {
+            document.getElementById(id).addEventListener('input', calculateFlow);
+            document.getElementById(id).addEventListener('change', calculateFlow);
+        });
+
+        [
+            'pipeDiameter', 'pipeType', 'pipeLength'
+        ].forEach(id => {
+            document.getElementById(id).addEventListener('input', calculatePump);
+            document.getElementById(id).addEventListener('change', calculatePump);
+        });
+
         function calculateFlow() {
-            // Получаем значения из полей ввода
-            const fluidType = document.getElementById('fluidType').value;
-            const power = parseFloat(document.getElementById('power').value);
-            const deltaTemp = parseFloat(document.getElementById('deltaTemp').value);
-            
-            // Проверка на корректность ввода
-            if (isNaN(power) || isNaN(deltaTemp) || deltaTemp === 0) {
-                document.getElementById('flow-result').style.display = 'none';
-                return;
+            const heatLoad = parseFloat(document.getElementById('heatLoad').value);
+            const heatUnit = document.getElementById('heatUnit').value;
+            const supplyTemp = parseFloat(document.getElementById('supplyTemp').value);
+            const returnTemp = parseFloat(document.getElementById('returnTemp').value);
+            if (isNaN(heatLoad) || heatLoad <= 0) return;
+            if (isNaN(supplyTemp) || isNaN(returnTemp)) return;
+            if (supplyTemp <= returnTemp) return;
+
+            const SPECIFIC_HEAT_CAPACITY = 4.187;
+            const DENSITY = 977.8;
+
+            let heatLoadKJ;
+            if (heatUnit === 'kW') {
+                heatLoadKJ = heatLoad * 3600;
+            } else {
+                heatLoadKJ = heatLoad * 4.187;
             }
-            
-            // Коэффициенты для разных жидкостей (кВт·ч/(м³·°C))
-            const fluidCoefficients = {
-                water: 1.163,
-                glycol: 0.96 // Примерное значение для 30% гликоля
-            };
-            
-            // Получаем коэффициент для выбранной жидкости
-            const coefficient = fluidCoefficients[fluidType];
-            
-            // Рассчитываем расход жидкости в м³/час
-            calculatedFlowRate = power / (deltaTemp * coefficient);
-            
-            // Конвертируем в другие единицы
-            const flowRateLH = calculatedFlowRate * 1000;
-            const flowRateLMin = flowRateLH / 60;
-            
-            // Рассчитываем скорость потока (для трубы 25 мм по умолчанию)
-            const pipeDiameter = 0.025; // 25 мм в метрах
+            const deltaT = supplyTemp - returnTemp;
+            calculatedFlowRate = heatLoadKJ / (SPECIFIC_HEAT_CAPACITY * deltaT);
+
+            const pipeDiameter = 0.025;
             const pipeArea = Math.PI * Math.pow(pipeDiameter / 2, 2);
-            flowVelocity = (calculatedFlowRate / 3600) / pipeArea;
-            
-            // Отображаем результат с анимацией
+            const flowRateM3H = calculatedFlowRate / DENSITY;
+            const flowRateLH = flowRateM3H * 1000;
+            const flowRateLMin = flowRateLH / 60;
+            flowVelocity = (flowRateM3H / 3600) / pipeArea;
+
             document.getElementById('flowRate').textContent = flowRateLH.toFixed(1);
-            document.getElementById('flowM3H').textContent = calculatedFlowRate.toFixed(3);
+            document.getElementById('flowM3H').textContent = flowRateM3H.toFixed(3);
             document.getElementById('flowLMin').textContent = flowRateLMin.toFixed(1);
-            
             document.getElementById('displayFlowRate').textContent = flowRateLH.toFixed(1);
-            document.getElementById('displayFlowM3H').textContent = calculatedFlowRate.toFixed(3);
+            document.getElementById('displayFlowM3H').textContent = flowRateM3H.toFixed(3);
             document.getElementById('displayFlowLMin').textContent = flowRateLMin.toFixed(1);
-            
-            document.getElementById('flowVelocity').textContent = flowVelocity.toFixed(2);
-            
+
             const resultElement = document.getElementById('flow-result');
             resultElement.style.display = 'block';
+            resultElement.style.animation = 'none';
+            void resultElement.offsetWidth;
+            resultElement.style.animation = 'fadeIn 0.5s ease';
+
+            calculatePump();
         }
-        
-        // Расчет сопротивления и подбор насоса
+
         function calculatePump() {
             if (calculatedFlowRate <= 0) {
                 document.getElementById('pump-result').style.display = 'none';
                 return;
             }
-            
-            const pipeDiameter = parseFloat(document.getElementById('pipeDiameter').value) / 1000; // переводим в метры
+            const pipeDiameter = parseFloat(document.getElementById('pipeDiameter').value) / 1000;
             const pipeLength = parseFloat(document.getElementById('pipeLength').value);
             const pipeType = document.getElementById('pipeType').value;
-            const roughness = pipeRoughness[pipeType] / 1000; // переводим в метры
-            
+            const roughness = pipeRoughness[pipeType] / 1000;
             if (isNaN(pipeLength) || pipeLength <= 0) {
                 document.getElementById('pump-result').style.display = 'none';
                 return;
             }
-            
-            // Плотность воды при 70°C (кг/м³)
+
             const density = 977.8;
-            // Динамическая вязкость воды при 70°C (Па·с)
             const viscosity = 0.000404;
-            
-            // Рассчитываем скорость потока (м/с)
-            const flowRateM3H = calculatedFlowRate;
+
+            const flowRateM3H = calculatedFlowRate / density;
             const flowRateM3S = flowRateM3H / 3600;
             const pipeArea = Math.PI * Math.pow(pipeDiameter / 2, 2);
             flowVelocity = flowRateM3S / pipeArea;
-            
-            // Число Рейнольдса
             const reynolds = (density * flowVelocity * pipeDiameter) / viscosity;
-            
-            // Коэффициент трения (формула Альтшуля для переходного режима)
+
             let frictionFactor;
             if (reynolds < 2300) {
-                // Ламинарный поток
                 frictionFactor = 64 / reynolds;
             } else {
-                // Турбулентный поток (формула Альтшуля)
                 const relativeRoughness = roughness / pipeDiameter;
                 frictionFactor = 0.11 * Math.pow(relativeRoughness + 68/reynolds, 0.25);
             }
-            
-            // Потери давления (Па)
             pressureDrop = frictionFactor * (pipeLength / pipeDiameter) * (density * Math.pow(flowVelocity, 2)) / 2;
-            
-            // Переводим в метры водяного столба (1 м вод. ст. = 9806.65 Па)
             const pressureDropM = pressureDrop / 9806.65;
-            
-            // Отображаем результат
+
             document.getElementById('resistance').textContent = pressureDropM.toFixed(2);
             document.getElementById('pumpVelocity').textContent = flowVelocity.toFixed(2);
             document.getElementById('pressureDrop').textContent = pressureDrop.toFixed(0);
-            
+
             const resultElement = document.getElementById('pump-result');
             resultElement.style.display = 'block';
-            
-            // Активируем выбор насосов
             setupPumpSelection(flowRateM3H, pressureDropM);
         }
-        
-        // Настройка выбора насосов с проверкой на соответствие
+
         function setupPumpSelection(flowM3H, requiredHead) {
             const pumpOptions = document.querySelectorAll('.pump-option');
-            
             pumpOptions.forEach(option => {
                 const pumpType = option.dataset.pump;
                 const pump = pumpCharacteristics[pumpType];
                 const pumpFlowElements = option.querySelectorAll('.pump-flow');
                 const pumpHeadElements = option.querySelectorAll('.pump-head');
-                
-                // Обновляем расчетные значения
                 pumpFlowElements.forEach(el => el.textContent = flowM3H.toFixed(3));
                 pumpHeadElements.forEach(el => el.textContent = requiredHead.toFixed(2));
-                
-                // Проверяем, подходит ли насос
                 const isAvailable = (flowM3H <= pump.maxFlow) && (requiredHead <= pump.maxHead);
-                
                 if (isAvailable) {
                     option.classList.remove('unavailable');
                 } else {
@@ -694,21 +504,23 @@
                 }
             });
         }
-        
-        // Добавляем обработчики для динамического расчета
-        document.getElementById('fluidType').addEventListener('change', calculateFlow);
-        document.getElementById('power').addEventListener('input', calculateFlow);
-        document.getElementById('deltaTemp').addEventListener('input', calculateFlow);
-        document.getElementById('pipeDiameter').addEventListener('input', calculatePump);
-        document.getElementById('pipeLength').addEventListener('input', calculatePump);
 
-        // Инициализация при загрузке
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const activeTab = document.querySelector('.tab.active').dataset.tab;
+                    if (activeTab === 'flow') {
+                        calculateFlow();
+                    } else {
+                        calculatePump();
+                    }
+                }
+            });
+        });
+
         document.addEventListener('DOMContentLoaded', function() {
-            // Устанавливаем начальное описание материала трубы
             const initialPipeType = document.getElementById('pipeType').value;
             document.getElementById('pipeTypeInfo').textContent = pipeTypeDescriptions[initialPipeType];
-            
-            // Выполняем первоначальный расчет
             calculateFlow();
         });
     </script>
