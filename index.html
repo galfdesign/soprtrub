@@ -50,13 +50,6 @@
             text-align: center;
         }
 
-        .design-credit {
-            display: block;
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.8);
-            margin-top: 5px;
-        }
-
         .calculator-header h1 {
             font-size: 1.5rem;
             font-weight: 600;
@@ -177,25 +170,6 @@
 
         .number-btn:hover {
             background: #e9ecef;
-        }
-
-        .calculate-btn {
-            width: 100%;
-            padding: 14px;
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 5px;
-        }
-
-        .calculate-btn:hover {
-            background: var(--secondary-color);
-            transform: translateY(-2px);
         }
 
         .result-container {
@@ -329,7 +303,6 @@
     <div class="calculator-container">
         <div class="calculator-header">
             <h1>Расчет системы отопления</h1>
-            <span class="design-credit">Galf Design</span>
         </div>
         
         <div class="calculator-body">
@@ -340,35 +313,28 @@
             
             <div class="tab-content active" id="flow-tab">
                 <div class="input-group">
-                    <label for="heatLoad">Тепловая нагрузка (кВт)</label>
+                    <label for="fluidType">Тип жидкости</label>
                     <div class="input-field">
-                        <input type="number" id="heatLoad" value="12" step="1" placeholder="Введите значение">
-                        <select id="heatUnit">
-                            <option value="kW">кВт/час</option>
-                            <option value="kcal">ккал/час</option>
+                        <select id="fluidType">
+                            <option value="water">Вода</option>
+                            <option value="glycol">Гликоль (30%)</option>
                         </select>
-                        <div class="number-controls">
-                            <button class="number-btn" onclick="changeValue('heatLoad', 1)">+</button>
-                            <button class="number-btn" onclick="changeValue('heatLoad', -1)">-</button>
-                        </div>
                     </div>
                 </div>
                 
                 <div class="input-group">
-                    <label for="supplyTemp">Температура на подаче (°C)</label>
+                    <label for="power">Тепловая мощность Q, кВт</label>
                     <div class="input-field">
-                        <input type="number" id="supplyTemp" value="70" placeholder="Введите температуру">
+                        <input type="number" id="power" placeholder="Введите значение">
                     </div>
                 </div>
                 
                 <div class="input-group">
-                    <label for="returnTemp">Температура на обратке (°C)</label>
+                    <label for="deltaTemp">Температурный перепад ∆t, °C</label>
                     <div class="input-field">
-                        <input type="number" id="returnTemp" value="60" placeholder="Введите температуру">
+                        <input type="number" id="deltaTemp" placeholder="Введите значение">
                     </div>
                 </div>
-                
-                <button class="calculate-btn" id="calculate-flow">Рассчитать расход</button>
                 
                 <div class="result-container" id="flow-result">
                     <div class="result-title">Результаты:</div>
@@ -436,8 +402,6 @@
                 <div class="input-group">
                     <label>Рассчитанный расход: <span id="displayFlowRate">0</span> л/час (<span id="displayFlowM3H">0</span> м³/ч, <span id="displayFlowLMin">0</span> л/мин)</label>
                 </div>
-                
-                <button class="calculate-btn" id="calculate-pump">Рассчитать сопротивление</button>
                 
                 <div class="result-container" id="pump-result">
                     <div class="result-title">Гидравлическое сопротивление:</div>
@@ -564,12 +528,19 @@
             }
             
             input.value = value;
+            // Вызываем расчет при изменении значения
+            if (document.querySelector('.tab.active').dataset.tab === 'flow') {
+                calculateFlow();
+            } else {
+                calculatePump();
+            }
         }
         
         // Обновление информации о материале трубы
         document.getElementById('pipeType').addEventListener('change', function() {
             const type = this.value;
             document.getElementById('pipeTypeInfo').textContent = pipeTypeDescriptions[type];
+            calculatePump();
         });
         
         // Инициализация табов
@@ -580,86 +551,69 @@
                 
                 this.classList.add('active');
                 document.getElementById(`${this.dataset.tab}-tab`).classList.add('active');
+                
+                // Пересчитываем при переключении вкладок
+                if (this.dataset.tab === 'flow') {
+                    calculateFlow();
+                } else {
+                    calculatePump();
+                }
             });
         });
         
         // Расчет расхода теплоносителя
-        document.getElementById('calculate-flow').addEventListener('click', calculateFlow);
-        
         function calculateFlow() {
             // Получаем значения из полей ввода
-            const heatLoad = parseFloat(document.getElementById('heatLoad').value);
-            const heatUnit = document.getElementById('heatUnit').value;
-            const supplyTemp = parseFloat(document.getElementById('supplyTemp').value);
-            const returnTemp = parseFloat(document.getElementById('returnTemp').value);
+            const fluidType = document.getElementById('fluidType').value;
+            const power = parseFloat(document.getElementById('power').value);
+            const deltaTemp = parseFloat(document.getElementById('deltaTemp').value);
             
             // Проверка на корректность ввода
-            if (isNaN(heatLoad)) {
-                alert('Пожалуйста, введите корректное значение тепловой нагрузки');
+            if (isNaN(power) || isNaN(deltaTemp) || deltaTemp === 0) {
+                document.getElementById('flow-result').style.display = 'none';
                 return;
             }
             
-            if (isNaN(supplyTemp) || isNaN(returnTemp)) {
-                alert('Пожалуйста, введите корректные значения температур');
-                return;
-            }
+            // Коэффициенты для разных жидкостей (кВт·ч/(м³·°C))
+            const fluidCoefficients = {
+                water: 1.163,
+                glycol: 0.96 // Примерное значение для 30% гликоля
+            };
             
-            if (supplyTemp <= returnTemp) {
-                alert('Температура подачи должна быть выше температуры обратки');
-                return;
-            }
+            // Получаем коэффициент для выбранной жидкости
+            const coefficient = fluidCoefficients[fluidType];
             
-            // Константы
-            const SPECIFIC_HEAT_CAPACITY = 4.187; // кДж/(кг·°C) - удельная теплоемкость воды
-            const DENSITY = 977.8; // кг/м³ при 70°C
+            // Рассчитываем расход жидкости в м³/час
+            calculatedFlowRate = power / (deltaTemp * coefficient);
             
-            // Конвертируем тепловую нагрузку в кДж/час, если нужно
-            let heatLoadKJ;
-            if (heatUnit === 'kW') {
-                heatLoadKJ = heatLoad * 3600; // 1 кВт = 3600 кДж/час
-            } else {
-                heatLoadKJ = heatLoad * 4.187; // 1 ккал = 4.187 кДж
-            }
-            
-            // Рассчитываем расход теплоносителя
-            const deltaT = supplyTemp - returnTemp;
-            calculatedFlowRate = heatLoadKJ / (SPECIFIC_HEAT_CAPACITY * deltaT);
+            // Конвертируем в другие единицы
+            const flowRateLH = calculatedFlowRate * 1000;
+            const flowRateLMin = flowRateLH / 60;
             
             // Рассчитываем скорость потока (для трубы 25 мм по умолчанию)
             const pipeDiameter = 0.025; // 25 мм в метрах
             const pipeArea = Math.PI * Math.pow(pipeDiameter / 2, 2);
-            const flowRateM3H = calculatedFlowRate / DENSITY;
-            const flowRateLH = flowRateM3H * 1000;
-            const flowRateLMin = flowRateLH / 60;
-            flowVelocity = (flowRateM3H / 3600) / pipeArea;
+            flowVelocity = (calculatedFlowRate / 3600) / pipeArea;
             
             // Отображаем результат с анимацией
             document.getElementById('flowRate').textContent = flowRateLH.toFixed(1);
-            document.getElementById('flowM3H').textContent = flowRateM3H.toFixed(3);
+            document.getElementById('flowM3H').textContent = calculatedFlowRate.toFixed(3);
             document.getElementById('flowLMin').textContent = flowRateLMin.toFixed(1);
             
             document.getElementById('displayFlowRate').textContent = flowRateLH.toFixed(1);
-            document.getElementById('displayFlowM3H').textContent = flowRateM3H.toFixed(3);
+            document.getElementById('displayFlowM3H').textContent = calculatedFlowRate.toFixed(3);
             document.getElementById('displayFlowLMin').textContent = flowRateLMin.toFixed(1);
             
             document.getElementById('flowVelocity').textContent = flowVelocity.toFixed(2);
             
             const resultElement = document.getElementById('flow-result');
             resultElement.style.display = 'block';
-            
-            // Добавляем анимацию
-            resultElement.style.animation = 'none';
-            void resultElement.offsetWidth; // Trigger reflow
-            resultElement.style.animation = 'fadeIn 0.5s ease';
         }
         
         // Расчет сопротивления и подбор насоса
-        document.getElementById('calculate-pump').addEventListener('click', calculatePump);
-        
         function calculatePump() {
             if (calculatedFlowRate <= 0) {
-                alert('Сначала рассчитайте расход теплоносителя');
-                document.querySelector('.tab[data-tab="flow"]').click();
+                document.getElementById('pump-result').style.display = 'none';
                 return;
             }
             
@@ -669,7 +623,7 @@
             const roughness = pipeRoughness[pipeType] / 1000; // переводим в метры
             
             if (isNaN(pipeLength) || pipeLength <= 0) {
-                alert('Пожалуйста, введите корректную длину трубопровода');
+                document.getElementById('pump-result').style.display = 'none';
                 return;
             }
             
@@ -679,7 +633,7 @@
             const viscosity = 0.000404;
             
             // Рассчитываем скорость потока (м/с)
-            const flowRateM3H = calculatedFlowRate / density;
+            const flowRateM3H = calculatedFlowRate;
             const flowRateM3S = flowRateM3H / 3600;
             const pipeArea = Math.PI * Math.pow(pipeDiameter / 2, 2);
             flowVelocity = flowRateM3S / pipeArea;
@@ -741,25 +695,21 @@
             });
         }
         
-        // Добавляем обработчики для полей ввода, чтобы при нажатии Enter тоже считалось
-        document.querySelectorAll('input').forEach(input => {
-            input.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    const activeTab = document.querySelector('.tab.active').dataset.tab;
-                    if (activeTab === 'flow') {
-                        calculateFlow();
-                    } else {
-                        calculatePump();
-                    }
-                }
-            });
-        });
+        // Добавляем обработчики для динамического расчета
+        document.getElementById('fluidType').addEventListener('change', calculateFlow);
+        document.getElementById('power').addEventListener('input', calculateFlow);
+        document.getElementById('deltaTemp').addEventListener('input', calculateFlow);
+        document.getElementById('pipeDiameter').addEventListener('input', calculatePump);
+        document.getElementById('pipeLength').addEventListener('input', calculatePump);
 
         // Инициализация при загрузке
         document.addEventListener('DOMContentLoaded', function() {
             // Устанавливаем начальное описание материала трубы
             const initialPipeType = document.getElementById('pipeType').value;
             document.getElementById('pipeTypeInfo').textContent = pipeTypeDescriptions[initialPipeType];
+            
+            // Выполняем первоначальный расчет
+            calculateFlow();
         });
     </script>
 </body>
